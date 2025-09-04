@@ -7,22 +7,69 @@ body {
     padding: 1rem;
 }
 .container {
-    max-width: 1280px;
+    max-width: 1480px;
     margin: 0 auto;
 }
 .main-header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem; 
+    padding: 1.5rem 1rem; 
+    background-color: #ffffff; 
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.08); 
+    position: relative; 
+    overflow: hidden; 
+    width: 100%;
 }
+
+
+.main-header::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 150px;
+    height: 150px;
+    background-color: #facc15;
+    border-radius: 50%;
+    opacity: 0.1;
+    transform: rotate(45deg);
+    z-index: 0;
+}
+
+.main-header::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    opacity: 0.1;
+    transform: rotate(45deg);
+    z-index: 0;
+}
+
+
 .main-header h1 {
-    font-size: 2.5rem;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem; 
     font-weight: 700;
     color: #2563eb;
     margin: 0 0 0.5rem 0;
+    text-shadow: none;
+    letter-spacing: 2px; 
+    position: relative; 
+    z-index: 1;
 }
+
 .main-header p {
-    font-size: 1.125rem;
-    color: #4b5563;
+    font-size: 1.15rem; 
+    color: #4b5563; 
+    text-shadow: none; 
+    position: relative; 
+    z-index: 1;
 }
 .main-content {
     display: flex;
@@ -119,6 +166,7 @@ body {
 #results-content .pokemon-image {
     display: block;
     margin: 0 auto 0.5rem auto;
+    margin-top: 10px;
     width: 96px;
     height: 96px;
 }
@@ -213,9 +261,9 @@ h3.section-title {
    background-color: #f3f4f6;
     border-radius: 0.5rem;
     padding: 0.5rem;
-    display: flex;          
-    align-items: center;    
-    gap: 0.5rem;            
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     justify-content: center;
 }
 .country-flag {
@@ -256,6 +304,7 @@ h3.section-title {
     background-color: #e5e7eb;
     padding: 0.25rem;
     border-radius: 9999px;
+    position: relative; /* MODIFICADO */
 }
 .search-mode-selector label {
     flex: 1;
@@ -275,13 +324,41 @@ h3.section-title {
     border-radius: 9999px;
     font-weight: 600;
     font-size: 0.9rem;
-    transition: background-color 0.2s, color 0.2s;
+    transition: color 0.3s ease-in-out; /* MODIFICADO */
+    position: relative; /* MODIFICADO */
+    z-index: 1; /* MODIFICADO */
 }
-.search-mode-selector input:checked+span {
+
+/* --- CÓDIGO NOVO PARA A ANIMAÇÃO DE DESLIZE --- */
+
+/* Cria o fundo azul deslizante */
+.search-mode-selector::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    width: calc(50% - 4px);
     background-color: #3b82f6;
-    color: white;
+    border-radius: 9999px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    z-index: 0;
 }
+
+/* Move o fundo azul quando a opção "País" está selecionada */
+.search-mode-selector:has(input[value="country"]:checked)::before {
+    transform: translateX(100%);
+}
+
+/* Muda a cor do texto da opção selecionada para branco */
+.search-mode-selector input:checked+span {
+    color: white;
+}
+
+/* --- FIM DO CÓDIGO NOVO --- */
+
+
 #search-form {
     display: flex;
     align-items: center;
@@ -322,7 +399,7 @@ h3.section-title {
 }
 #suggestions-box {
   position: absolute;
-  top: 105%;
+  top: 115%;
   left: 0;
   right: 0;
   background-color: white;
@@ -399,14 +476,14 @@ h3.section-title {
 
   .main-content {
     flex-direction: row;
-    align-items: flex-start; 
+    align-items: flex-start;
     gap: 1.5rem;
   }
 
  
   .map-column {
     flex: 1;
-    width: auto; 
+    width: auto;
     margin-top: 0;
   }
 
@@ -419,9 +496,9 @@ h3.section-title {
   
 
   .info-card {
-    top: 0; 
+    top: 0;
     width: 100%;
-    min-height: 450px; 
+    min-height: 450px;
     display: flex;
     flex-direction: column;
   }

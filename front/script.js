@@ -48,41 +48,68 @@ const createAndAppend = (tag, parent, options = {}) => {
 
 // --- LÓGICA DO MAPA (amCharts) ---
 async function initializeMap() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/country-biomes`);
-        if (!response.ok) throw new Error((await response.json()).error);
-        countryBiomeData = await response.json();
-    } catch (error) {
-        mapLoader.style.display = 'none';
-        displayError("Falha ao conectar ao servidor. Verifique se o backend está a correr e recarregue a página.");
-        return;
-    }
+  try {
+    const response = await fetch(`${API_BASE_URL}/country-biomes`);
+    if (!response.ok) throw new Error((await response.json()).error);
 
-    am5.ready(function () {
-        mapLoader.style.display = 'none';
-        let root = am5.Root.new("world-map");
-        root.setThemes([am5themes_Animated.new(root)]);
+    countryBiomeData = await response.json(); // <- aqui os dados são carregados
 
-        let chart = root.container.children.push(am5map.MapChart.new(root, { panX: "rotateX", panY: "translateY", projection: am5map.geoMercator() }));
-        chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+  } catch (error) {
+    mapLoader.style.display = 'none';
+    displayError("Falha ao conectar ao servidor. Verifique se o backend está a correr e recarregue a página.");
+    return;
+  }
 
-        mapPolygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, { geoJSON: am5geodata_worldLow, exclude: ["AQ"], field: "id" }));
-        
-        resetMapToBiomes();
+  am5.ready(function () {
+    mapLoader.style.display = 'none';
 
-        mapPolygonSeries.mapPolygons.template.setAll({ tooltipText: "", toggleKey: "active", interactive: true });
-        mapPolygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) => target.dataItem.dataContext.fill || am5.color(getTypeColor('default')));
-        mapPolygonSeries.mapPolygons.template.adapters.add("tooltipText", (text, target) => {
-            const country = countryBiomeData[target.dataItem.get("id")];
-            return country ? `[bold]${country.name}[/]\nBioma: ${country.type}` : `[bold]${target.dataItem.get("id")}[/]\n(Bioma não definido)`;
-        });
+    let root = am5.Root.new("world-map");
+    root.setThemes([am5themes_Animated.new(root)]);
 
-        mapPolygonSeries.mapPolygons.template.events.on("click", (ev) => {
-            const countryId = ev.target.dataItem.get("id");
-            if (countryId) fetchAndDisplayCountryInfo(countryId);
-        });
-        mapPolygonSeries.mapPolygons.template.states.create("hover", { fillOpacity: 0.7 });
+    let chart = root.container.children.push(am5map.MapChart.new(root, {
+      panX: "rotateX",
+      panY: "translateY",
+      projection: am5map.geoMercator()
+    }));
+
+    chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+
+    mapPolygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+      geoJSON: am5geodata_worldLow,
+      exclude: ["AQ"],
+      field: "id"
+    }));
+
+    // 🚨 MOVEI ISSO PARA O FINAL
+    mapPolygonSeries.mapPolygons.template.setAll({
+      tooltipText: "",
+      toggleKey: "active",
+      interactive: true
     });
+
+    mapPolygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) =>
+      target.dataItem.dataContext.fill || am5.color(getTypeColor('default'))
+    );
+
+    mapPolygonSeries.mapPolygons.template.adapters.add("tooltipText", (text, target) => {
+      const country = countryBiomeData[target.dataItem.get("id")];
+      return country
+        ? `[bold]${country.name}[/]\nBioma: ${country.type}`
+        : `[bold]${target.dataItem.get("id")}[/]\n(Bioma não definido)`;
+    });
+
+    mapPolygonSeries.mapPolygons.template.events.on("click", (ev) => {
+      const countryId = ev.target.dataItem.get("id");
+      if (countryId) fetchAndDisplayCountryInfo(countryId);
+    });
+
+    mapPolygonSeries.mapPolygons.template.states.create("hover", {
+      fillOpacity: 0.7
+    });
+
+    // ✅ AGORA SIM, DEPOIS QUE countryBiomeData EXISTE
+    resetMapToBiomes();
+  });
 }
 
 // --- LÓGICA DE EXIBIÇÃO ---
@@ -96,7 +123,7 @@ async function fetchAndDisplayCountryInfo(countryCode) {
         const response = await fetch(`${API_BASE_URL}/country-info/${countryCode}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
-        
+
         let weatherHtml = `<p class="text-sm text-gray-500">Não foi possível obter o clima.</p>`;
         if (data.weather) {
             let eventHtml = '';
@@ -118,7 +145,7 @@ async function fetchAndDisplayCountryInfo(countryCode) {
                     </div>
                     ${eventHtml}`;
         }
-        
+
         const baseColor = getTypeColor(data.baseType);
         resultsContentDiv.innerHTML = `
             <h2>${data.name}</h2>
@@ -208,12 +235,13 @@ function displayPokemonResults(data) {
     const abilitiesList = createAndAppend('ul', abilitiesSection, { className: 'abilities-list' });
     data.abilities.forEach(ability => createAndAppend('li', abilitiesList, { textContent: ability }));
 
-    // Top Regions
+    // ALTERAÇÃO: Seção "Top 3 Regiões" re-adicionada
     const regionsSection = createAndAppend('div', resultsContentDiv);
-    createAndAppend('h3', regionsSection, { className: 'section-title', textContent: 'Top 3 Regiões' });
+    createAndAppend('h3', regionsSection, { className: 'section-title', textContent: 'Top 3 Países' });
     const countryGrid = createAndAppend('div', regionsSection, { className: 'country-grid' });
     if (data.countries.length > 0) {
-        data.countries.forEach(country => {
+        // Pega a lista completa de países e exibe apenas os 3 primeiros
+        data.countries.slice(0, 3).forEach(country => {
             const countryCard = createAndAppend('div', countryGrid, { className: 'country-card' });
             createAndAppend('img', countryCard, { src: country.flag, alt: `Bandeira de ${country.name}`, className: 'country-flag' });
             createAndAppend('span', countryCard, { className: 'country-name', textContent: country.name });
@@ -379,7 +407,7 @@ function renderSuggestions(suggestions, query) {
         suggestionsBox.classList.add('hidden');
         return;
     }
-    
+
     // Mantido com innerHTML por ser uma lista simples, temporária e de baixa complexidade
     const mode = getSearchMode();
     suggestionsBox.innerHTML = suggestions.map(item => {

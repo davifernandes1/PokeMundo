@@ -8,44 +8,37 @@ const app = express();
 const PORT = 3000;
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 
-// Habilita CORS para permitir que o front-end aceda a esta API
 app.use(cors());
 
-// --- Cache em Memória ---
+
 let countryDataCache = null;
 let pokemonNameCache = [];
 
-// --- Lógica de Bioma Dinâmico ---
-function determinePokemonType(country) {
-    const { region, subregion, landlocked, cca2 } = country;
 
-    // Regras específicas para garantir a presença de todos os tipos
-    if (['JP', 'KR', 'US'].includes(cca2)) return 'electric';
-    if (['GB', 'RO', 'MX'].includes(cca2)) return 'ghost';
-    if (['DE', 'SE'].includes(cca2)) return 'steel';
-    if (['FR', 'CH'].includes(cca2)) return 'fairy';
-    if (['CN', 'VN'].includes(cca2)) return 'dragon';
-    if (['IN', 'EG', 'GR', 'PE'].includes(cca2)) return 'psychic';
-    if (['BR', 'CG', 'ID', 'VE'].includes(cca2)) return 'grass';
-    if (['AU', 'CL', 'MN', 'SA'].includes(cca2)) return 'ground';
-    if (['PL', 'AT'].includes(cca2)) return 'normal';
-    if (['TH', 'MG', 'CR', 'PG'].includes(cca2)) return 'bug';
-    if (['ZA', 'IT', 'AF'].includes(cca2)) return 'rock';
-    if (['GH', 'BG', 'RS'].includes(cca2)) return 'fighting';
-    if (['AR', 'NZ', 'KE'].includes(cca2)) return 'flying';
-    if (['IR', 'TR', 'ES'].includes(cca2)) return 'fire';
-    if (['NG', 'SD'].includes(cca2)) return 'dark'; 
-    if (['CO', 'MY'].includes(cca2)) return 'poison';
-    
-    // Regras geográficas
-    if (subregion === 'South-Eastern Asia' || subregion === 'Caribbean' || subregion === 'Polynesia') return 'water';
-    if (subregion === 'Northern Europe' || cca2 === 'GL' || cca2 === 'RU') return 'ice';
-    if (subregion === 'Northern Africa' || subregion === 'Western Asia') return 'ground';
-    
-    return 'normal'; // Padrão
+function determinePokemonType(country) {
+    const { region, subregion, landlocked, cca2, area, population } = country;
+    const populationDensity = population / area; // Pessoas por km²
+    if (['JP', 'KR', 'US', 'DE', 'CN', 'IL', 'TW'].includes(cca2)) return 'electric';
+    if (['IN', 'GR', 'EG', 'PE', 'IT', 'GB'].includes(cca2)) return 'psychic';
+    if (['GL', 'AQ', 'IS', 'SJ', 'NO', 'FI', 'SE'].includes(cca2)) return 'ice';
+    if (['SA', 'DZ', 'EG', 'LY', 'IR', 'AU', 'ES'].includes(cca2) || subregion === 'Northern Africa') return 'fire';
+    if (['MN', 'CL', 'AU'].includes(cca2) || (region === 'Africa' && populationDensity < 25)) return 'ground';
+    if (['CH', 'NP', 'AF', 'ZA'].includes(cca2)) return 'rock';
+    if (['BO', 'NP', 'BT'].includes(cca2) || ['id', 'ph'].includes(cca2.toLowerCase())) return 'flying';
+    if (['VN', 'BT'].includes(cca2)) return 'dragon'; 
+    if (['RO', 'MX', 'PL'].includes(cca2) || (populationDensity < 5 && population > 10000)) return 'ghost';
+    if (['IE', 'FR', 'NZ', 'CH', 'AT'].includes(cca2)) return 'fairy';
+    if (['BR', 'TH', 'CU'].includes(cca2)) return 'fighting';
+    if (['RU', 'BE', 'LU'].includes(cca2)) return 'steel';
+    if (['CA'].includes(cca2) || (cca2 === 'RU' && region === 'Asia')) return 'dark';
+    if (['AU', 'BR', 'CO', 'IN', 'MY'].includes(cca2)) return 'poison';
+    if (['CR', 'MG', 'PG', 'TH'].includes(cca2) || subregion === 'Central America') return 'bug';
+    if (['BR', 'CG', 'ID', 'VE'].includes(cca2) || subregion === 'South America') return 'grass';
+    if (!landlocked || subregion === 'Caribbean' || subregion === 'Polynesia' || subregion === 'South-Eastern Asia') return 'water';
+    return 'normal';
 }
 
-// --- Funções de Inicialização ---
+
 async function cacheAllPokemonNames() {
     try {
         console.log('A buscar a lista de todos os Pokémon...');
@@ -64,14 +57,16 @@ async function cacheAllPokemonNames() {
 async function initializeServerData() {
     console.log('A buscar e processar dados dos países...');
     try {
-        const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,capital,cca2,region,subregion,landlocked,area,flags');
+        const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,capital,cca2,region,subregion,landlocked,area,population,flags');
         const allCountries = response.data;
         const processedCountries = {};
         allCountries.forEach(country => {
-            if (country.cca2 && country.capital && country.capital.length > 0) {
+            if (country.cca2 && country.capital && country.capital.length > 0 && country.area > 0 && country.population) {
                 processedCountries[country.cca2] = {
-                    name: country.name.common, capital: country.capital[0],
-                    baseType: determinePokemonType(country), flag: country.flags.svg
+                    name: country.name.common, 
+                    capital: country.capital[0],
+                    baseType: determinePokemonType(country), 
+                    flag: country.flags.svg
                 };
             }
         });
@@ -83,7 +78,7 @@ async function initializeServerData() {
     }
 }
 
-// --- ROTAS DA API ---
+
 app.get('/api/country-biomes', (req, res) => {
     if(!countryDataCache) return res.status(503).json({error: 'Dados a carregar'});
     const biomeData = Object.entries(countryDataCache).reduce((acc, [code, data]) => {
@@ -168,7 +163,6 @@ app.get('/api/pokemon-locations', async (req, res) => {
     }
 });
 
-// --- ROTAS DE AUTOCOMPLETE ---
 app.get('/api/autocomplete/pokemon', (req, res) => {
     const query = (req.query.query || '').toLowerCase();
     if (!query) return res.json([]);
@@ -234,11 +228,10 @@ app.get('/api/pokemon-by-country', async (req, res) => {
 
 // --- INICIALIZAÇÃO DO SERVIDOR ---
 app.listen(PORT, () => {
-    console.log(`Servidor PokéGlobe a correr em http://localhost:${PORT}`);
+    console.log(`Servidor PokéPlanet a correr em http://localhost:${PORT}`);
     if (!OPENWEATHER_API_KEY) {
         console.warn('AVISO: A chave da API OpenWeatherMap não foi encontrada.');
     }
     initializeServerData();
     cacheAllPokemonNames();
 });
-
