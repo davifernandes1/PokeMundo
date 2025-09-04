@@ -1,0 +1,22 @@
+{
+  "name": "pokeglobe-backend",
+  "version": "1.0.0",
+  "description": "Servidor para a aplicação PokéMundo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "pokemon",
+    "map",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4.19.2"
+  }
+}

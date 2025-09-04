@@ -1,0 +1,5 @@
+# Arquivo de configuração de ambiente - NUNCA deve ir para o repositório
+.env
+
+# Dependências do Node.js - Elas são instaladas com 'npm install'
+/back/node_modules

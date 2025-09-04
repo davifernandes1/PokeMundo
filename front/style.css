@@ -1,0 +1,428 @@
+/* --- GERAL E LAYOUT --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    color: #1f2937;
+    margin: 0;
+    padding: 1rem;
+}
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.main-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.main-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0 0 0.5rem 0;
+}
+.main-header p {
+    font-size: 1.125rem;
+    color: #4b5563;
+}
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+    .main-content {
+        flex-direction: row;
+    }
+}
+.map-column {
+    flex-grow: 2;
+    position: relative;
+}
+.info-column {
+    flex-grow: 1;
+}
+.card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.info-card {
+    position: relative;
+    top: 1.5rem;
+}
+#world-map {
+    width: 100%;
+    height: 60vh;
+    min-height: 450px;
+    cursor: grab;
+}
+#map-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3b82f6;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+#info-panel .hidden {
+    display: none;
+}
+#initial-state {
+    text-align: center;
+    color: #6b7280;
+    padding: 2rem 0;
+}
+#initial-state h3 {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+#loader {
+    text-align: center;
+    padding: 2rem 0;
+    color: #3b82f6;
+    font-weight: 600;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    50% {
+        opacity: 0.5;
+    }
+}
+#error-message {
+    text-align: center;
+    padding: 1rem;
+    background-color: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+    border-radius: 0.5rem;
+}
+#results-content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.25rem;
+    text-transform: capitalize;
+}
+#results-content .pokemon-image {
+    display: block;
+    margin: 0 auto 0.5rem auto;
+    width: 96px;
+    height: 96px;
+}
+.type-badge-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    color: white;
+    text-transform: capitalize;
+}
+.pokemon-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+}
+.stat-item h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0 0 0.25rem 0;
+    text-transform: uppercase;
+}
+.stat-item p {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+}
+.pokemon-description {
+    font-size: 0.95rem;
+    color: #4b5563;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+h3.section-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.25rem;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+.stat-name {
+    font-weight: 600;
+}
+.stat-bar {
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    height: 10px;
+}
+.stat-bar-inner {
+    background-color: #3b82f6;
+    height: 100%;
+    border-radius: 9999px;
+}
+.abilities-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.abilities-list li {
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    text-transform: capitalize;
+    font-size: 0.85rem;
+}
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.75rem;
+}
+.country-card {
+   background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    display: flex;          
+    align-items: center;    
+    gap: 0.5rem;            
+    justify-content: center;
+}
+.country-flag {
+    width: 40px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    margin: 0px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.country-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+}
+#reset-button {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #4b5563;
+    color: white;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#reset-button:hover {
+    background-color: #374151;
+}
+
+/* --- NOVOS ESTILOS PARA BUSCA AVANÇADA --- */
+.search-mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    background-color: #e5e7eb;
+    padding: 0.25rem;
+    border-radius: 9999px;
+}
+.search-mode-selector label {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+.search-mode-selector input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.search-mode-selector span {
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+.search-mode-selector input:checked+span {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+#search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+#search-form .autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+}
+#search-input {
+    width: 92.8%;
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s;
+}
+#search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+#search-form button {
+    padding: 0.75rem;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#search-form button:hover {
+    background-color: #2563eb;
+}
+#search-form .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+#suggestions-box {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 200px; /* a barra nunca passa disso */
+  overflow-y: auto;
+  z-index: 100;
+}
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+.suggestion-item:hover {
+    background-color: #f3f4f6;
+}
+.suggestion-item strong {
+    color: #3b82f6;
+}
+
+/* NOVO: Estilos para resultados da busca por país */
+.country-pokemon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 1rem;
+}
+.country-pokemon-card {
+    text-align: center;
+}
+.country-pokemon-card img {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto;
+}
+.country-pokemon-card p {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    margin-top: 0.25rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#suggestions-box img {
+  max-width: 40px;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+#suggestions-box .suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+#suggestions-box .suggestion-item:hover {
+  background-color: #f3f4f6;
+}
+
+
+@media (min-width: 1024px) {
+
+
+  .main-content {
+    flex-direction: row;
+    align-items: flex-start; 
+    gap: 1.5rem;
+  }
+
+ 
+  .map-column {
+    flex: 1;
+    width: auto; 
+    margin-top: 0;
+  }
+
+ 
+  .info-column {
+    
+    flex: 0 0 420px;
+    width: 420px;
+  }
+  
+
+  .info-card {
+    top: 0; 
+    width: 100%;
+    min-height: 450px; 
+    display: flex;
+    flex-direction: column;
+  }
+}
