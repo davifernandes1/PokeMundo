@@ -112,10 +112,7 @@ async function initializeMap() {
   });
 }
 
-// --- LÓGICA DE EXIBIÇÃO ---
 async function fetchAndDisplayCountryInfo(countryCode) {
-    // Esta função foi mantida com innerHTML por ser mais simples e ter menos risco,
-    // mas poderia ser refatorada como as outras se desejado.
     hideAllPanels();
     loaderDiv.classList.remove('hidden');
 
@@ -124,38 +121,47 @@ async function fetchAndDisplayCountryInfo(countryCode) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
 
-        let weatherHtml = `<p class="text-sm text-gray-500">Não foi possível obter o clima.</p>`;
+        let weatherHtml = `<p>Não foi possível obter o clima.</p>`;
         if (data.weather) {
             let eventHtml = '';
             if (data.weather.eventType) {
                 const color = getTypeColor(data.weather.eventType);
                 eventHtml = `
-                        <div style="margin-top: 0.5rem; text-align: center;">
-                            <p style="font-size: 0.875rem; font-weight: 600;">Evento Climático:</p>
-                            <span class="type-badge" style="background-color: ${color};">${data.weather.eventType}</span>
-                        </div>`;
+                    <div class="weather-event">
+                        <p>Evento Climático:</p>
+                        <span class="type-badge" style="background-color: ${color};">${data.weather.eventType}</span>
+                    </div>`;
             }
+            // Estrutura do clima agora usa as novas classes CSS
             weatherHtml = `
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <img src="${data.weather.icon}" alt="${data.weather.condition}" style="width: 48px; height: 48px;">
-                        <div>
-                            <p style="font-weight: 700; font-size: 1.25rem;">${data.weather.temp}</p>
-                            <p style="font-size: 0.875rem; text-transform: capitalize;">${data.weather.condition}</p>
-                        </div>
+                <div class="weather-main">
+                    <img src="${data.weather.icon}" alt="${data.weather.condition}" class="weather-icon">
+                    <div class="weather-details">
+                        <p class="weather-temp">${data.weather.temp}</p>
+                        <p class="weather-condition">${data.weather.condition}</p>
                     </div>
-                    ${eventHtml}`;
+                </div>
+                ${eventHtml}`;
         }
 
         const baseColor = getTypeColor(data.baseType);
+        // HTML principal reestruturado para usar as novas classes
         resultsContentDiv.innerHTML = `
-            <h2>${data.name}</h2>
+            <div class="country-info-header">
+                <img src="${data.flag}" alt="Bandeira de ${data.name}">
+                <h2>${data.name}</h2>
+            </div>
+            
             <div style="text-align: center; margin-bottom: 1rem;">
                 <p style="font-size: 0.875rem; font-weight: 600;">Bioma Base:</p>
                 <span class="type-badge" style="background-color: ${baseColor};">${data.baseType}</span>
             </div>
-            <hr style="margin: 0.75rem 0;">
-            <h3 style="font-weight: 600; text-align: center; margin-bottom: 0.5rem;">Clima Atual em ${data.capital}</h3>
-            ${weatherHtml}`;
+
+            <div class="weather-info">
+                <h3>Clima Atual em ${data.capital}</h3>
+                ${weatherHtml}
+            </div>
+            `;
     } catch (error) {
         displayError(error.message);
     } finally {
@@ -163,6 +169,7 @@ async function fetchAndDisplayCountryInfo(countryCode) {
         resultsContentDiv.classList.remove('hidden');
     }
 }
+
 
 function resetMapToBiomes() {
     if (!mapPolygonSeries) return;

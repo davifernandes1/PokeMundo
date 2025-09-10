@@ -427,7 +427,7 @@ h3.section-title {
     color: #3b82f6;
 }
 
-/* NOVO: Estilos para resultados da busca por país */
+
 .country-pokemon-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -502,4 +502,79 @@ h3.section-title {
     display: flex;
     flex-direction: column;
   }
+}
+.country-info-header {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;   
+    gap: 0.75rem;          
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.country-info-header img {
+    width: 80px;           
+    height: auto;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.country-info-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.weather-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.weather-info h3 {
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem; 
+}
+
+.weather-icon {
+    width: 50px;
+    height: 50px;
+}
+
+
+.weather-details {
+    text-align: left;
+}
+
+.weather-temp {
+    font-weight: 700;
+    font-size: 1.5rem; 
+    line-height: 1;
+    margin: 0;
+}
+
+.weather-condition {
+    font-size: 0.9rem;
+    text-transform: capitalize;
+    color: #4b5563;
+    margin: 0;
+}
+
+.weather-event {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.weather-event p {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
 }

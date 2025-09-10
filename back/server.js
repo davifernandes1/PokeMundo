@@ -1,4 +1,3 @@
-// Carrega as variáveis de ambiente do ficheiro .env
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -17,7 +16,7 @@ let pokemonNameCache = [];
 
 function determinePokemonType(country) {
     const { region, subregion, landlocked, cca2, area, population } = country;
-    const populationDensity = population / area; // Pessoas por km²
+    const populationDensity = population / area; 
     if (['JP', 'KR', 'US', 'DE', 'CN', 'IL', 'TW'].includes(cca2)) return 'electric';
     if (['IN', 'GR', 'EG', 'PE', 'IT', 'GB'].includes(cca2)) return 'psychic';
     if (['GL', 'AQ', 'IS', 'SJ', 'NO', 'FI', 'SE'].includes(cca2)) return 'ice';
