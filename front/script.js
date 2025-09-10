@@ -9,7 +9,7 @@ const typeColors = {
     default: '#d1d5db'
 };
 const API_BASE_URL = 'http://localhost:3000/api';
-const MAX_BASE_STAT = 180; // Valor de base para calcular a % da barra de status
+const MAX_BASE_STAT = 180; 
 
 // --- VARIÁVEIS GLOBAIS ---
 let mapPolygonSeries;
@@ -52,7 +52,7 @@ async function initializeMap() {
     const response = await fetch(`${API_BASE_URL}/country-biomes`);
     if (!response.ok) throw new Error((await response.json()).error);
 
-    countryBiomeData = await response.json(); // <- aqui os dados são carregados
+    countryBiomeData = await response.json(); 
 
   } catch (error) {
     mapLoader.style.display = 'none';
@@ -79,8 +79,6 @@ async function initializeMap() {
       exclude: ["AQ"],
       field: "id"
     }));
-
-    // 🚨 MOVEI ISSO PARA O FINAL
     mapPolygonSeries.mapPolygons.template.setAll({
       tooltipText: "",
       toggleKey: "active",
@@ -107,7 +105,6 @@ async function initializeMap() {
       fillOpacity: 0.7
     });
 
-    // ✅ AGORA SIM, DEPOIS QUE countryBiomeData EXISTE
     resetMapToBiomes();
   });
 }
@@ -132,7 +129,7 @@ async function fetchAndDisplayCountryInfo(countryCode) {
                         <span class="type-badge" style="background-color: ${color};">${data.weather.eventType}</span>
                     </div>`;
             }
-            // Estrutura do clima agora usa as novas classes CSS
+
             weatherHtml = `
                 <div class="weather-main">
                     <img src="${data.weather.icon}" alt="${data.weather.condition}" class="weather-icon">
@@ -145,7 +142,6 @@ async function fetchAndDisplayCountryInfo(countryCode) {
         }
 
         const baseColor = getTypeColor(data.baseType);
-        // HTML principal reestruturado para usar as novas classes
         resultsContentDiv.innerHTML = `
             <div class="country-info-header">
                 <img src="${data.flag}" alt="Bandeira de ${data.name}">
@@ -192,7 +188,7 @@ function displayPokemonResults(data) {
     }));
     mapPolygonSeries.data.setAll(newMapData);
 
-    resultsContentDiv.innerHTML = ''; // Limpa o conteúdo anterior
+    resultsContentDiv.innerHTML = ''; 
 
     // Header
     const header = createAndAppend('div', resultsContentDiv, { style: { textAlign: 'center' } });
@@ -242,12 +238,11 @@ function displayPokemonResults(data) {
     const abilitiesList = createAndAppend('ul', abilitiesSection, { className: 'abilities-list' });
     data.abilities.forEach(ability => createAndAppend('li', abilitiesList, { textContent: ability }));
 
-    // ALTERAÇÃO: Seção "Top 3 Regiões" re-adicionada
+
     const regionsSection = createAndAppend('div', resultsContentDiv);
     createAndAppend('h3', regionsSection, { className: 'section-title', textContent: 'Top 3 Países' });
     const countryGrid = createAndAppend('div', regionsSection, { className: 'country-grid' });
     if (data.countries.length > 0) {
-        // Pega a lista completa de países e exibe apenas os 3 primeiros
         data.countries.slice(0, 3).forEach(country => {
             const countryCard = createAndAppend('div', countryGrid, { className: 'country-card' });
             createAndAppend('img', countryCard, { src: country.flag, alt: `Bandeira de ${country.name}`, className: 'country-flag' });
@@ -286,24 +281,19 @@ function displayCountryResults(data) {
 
     if (!searchCode) {
         console.warn("Nenhum código de país válido encontrado!");
-        // Opcional: mostrar um erro para o usuário
         displayError(`Não foi possível encontrar o país "${data.country.name}" no mapa.`);
         return;
     }
 
-    // --- CÓDIGO ATUALIZADO ---
-    // Recria o conjunto de dados do mapa para garantir consistência
+
     const highlightFill = am5.color(getTypeColor(data.country.baseType));
     const newMapData = Object.entries(countryBiomeData).map(([id, countryData]) => ({
         id,
         name: countryData.name,
         type: countryData.type,
-        // Pinta o país pesquisado com a cor do seu bioma e os outros com a cor padrão
         fill: id === searchCode ? highlightFill : am5.color(getTypeColor('default'))
     }));
-    // Define o novo conjunto de dados para a série de polígonos do mapa
     mapPolygonSeries.data.setAll(newMapData);
-    // --- FIM DO CÓDIGO ATUALIZADO ---
 
     resultsContentDiv.innerHTML = '';
 
@@ -415,7 +405,6 @@ function renderSuggestions(suggestions, query) {
         return;
     }
 
-    // Mantido com innerHTML por ser uma lista simples, temporária e de baixa complexidade
     const mode = getSearchMode();
     suggestionsBox.innerHTML = suggestions.map(item => {
         const highlightedName = item.name.replace(new RegExp(`^${query}`, 'i'), `<strong>${query}</strong>`);
@@ -462,7 +451,6 @@ suggestionsBox.addEventListener('click', (e) => {
 });
 
 document.addEventListener("click", (e) => {
-    // Se clicar fora do input E fora do suggestionsBox → esconde
     if (
         !searchInput.contains(e.target) &&
         !suggestionsBox.contains(e.target)
@@ -487,7 +475,6 @@ searchForm.addEventListener('submit', e => {
     }
 });
 
-// Evento centralizado para o botão de reset
 resultsContentDiv.addEventListener('click', (event) => {
     if (event.target.id === 'reset-button') {
         hideAllPanels();
